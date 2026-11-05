@@ -1,0 +1,17 @@
+$kind: http-request
+description: 02 POST create Beirut
+url: "{{baseUrl}}/cities"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: '{"name":"Beirut","country":"Lebanon"}'
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Returns 201", () => pm.response.to.have.status(201));
+      pm.test("Expected response", () => { const data = pm.response.json(); pm.expect(data.name).to.eql("Beirut"); pm.expect(data.country).to.eql("Lebanon"); pm.expect(data.id).to.be.a("number"); });
+      if (pm.response.code === 201) pm.collectionVariables.set("cityId", String(pm.response.json().id));
+    language: text/javascript
+order: 2000

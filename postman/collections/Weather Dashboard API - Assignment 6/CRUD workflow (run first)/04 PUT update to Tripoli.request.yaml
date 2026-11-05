@@ -1,0 +1,16 @@
+$kind: http-request
+description: 04 PUT update to Tripoli
+url: "{{baseUrl}}/cities/{{cityId}}"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: '{"name":"Tripoli","country":"Lebanon"}'
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Returns 200", () => pm.response.to.have.status(200));
+      pm.test("Expected response", () => { const data = pm.response.json(); pm.expect(data.name).to.eql("Tripoli"); pm.expect(data.country).to.eql("Lebanon"); });
+    language: text/javascript
+order: 4000

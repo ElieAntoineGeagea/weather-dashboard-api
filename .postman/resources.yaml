@@ -1,0 +1,13 @@
+# Use this workspace to collaborate
+workspace:
+  id: d8a69807-60bc-425c-8292-6371bc0aaa28
+
+cloudResources:
+  collections:
+    ../postman/collections/Weather Dashboard API - Assignment 6: e60cc145-6364-48dd-baba-59b3974eb760
+
+# All resources in the `postman/` folder are automatically registered in Local View.
+# Point to additional files outside the `postman/` folder to register them individually. Example:
+#localResources:
+#  collections:
+#    - ../tests/E2E Test Collection/

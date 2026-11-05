@@ -1,0 +1,297 @@
+{
+  "info": {
+    "_postman_id": "3ac65dcc-434b-45ef-a2be-2ac6bd0636fa",
+    "name": "Weather Dashboard API - Assignment 6",
+    "description": "Run on http://localhost:3001. Run requests in numerical order. POST stores the new ID as cityId automatically.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "CRUD workflow (run first)",
+      "item": [
+        {
+          "name": "01 GET all cities",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/cities",
+            "description": "01 GET all cities",
+            "header": []
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Returns 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Expected response\", () => { const data = pm.response.json(); pm.expect(data).to.be.an(\"array\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 POST create Beirut",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/cities",
+            "description": "02 POST create Beirut",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Beirut\",\"country\":\"Lebanon\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Returns 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Expected response\", () => { const data = pm.response.json(); pm.expect(data.name).to.eql(\"Beirut\"); pm.expect(data.country).to.eql(\"Lebanon\"); pm.expect(data.id).to.be.a(\"number\"); });",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"cityId\", String(pm.response.json().id));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 GET created city",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/cities/{{cityId}}",
+            "description": "03 GET created city",
+            "header": []
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Returns 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Expected response\", () => { const data = pm.response.json(); pm.expect(String(data.id)).to.eql(pm.collectionVariables.get(\"cityId\")); pm.expect(data.name).to.eql(\"Beirut\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 PUT update to Tripoli",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/cities/{{cityId}}",
+            "description": "04 PUT update to Tripoli",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Tripoli\",\"country\":\"Lebanon\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Returns 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Expected response\", () => { const data = pm.response.json(); pm.expect(data.name).to.eql(\"Tripoli\"); pm.expect(data.country).to.eql(\"Lebanon\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "05 DELETE city",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/cities/{{cityId}}",
+            "description": "05 DELETE city",
+            "header": []
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Returns 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Expected response\", () => { const data = pm.response.json(); pm.expect(data.message).to.eql(\"City deleted successfully\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Error and validation tests (run second)",
+      "item": [
+        {
+          "name": "06 GET deleted city",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/cities/{{cityId}}",
+            "description": "06 GET deleted city",
+            "header": []
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Returns 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Expected response\", () => { const data = pm.response.json(); pm.expect(data.error).to.eql(\"City not found\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "07 GET invalid ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/cities/abc",
+            "description": "07 GET invalid ID",
+            "header": []
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Returns 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Expected response\", () => { const data = pm.response.json(); pm.expect(data.error).to.eql(\"City ID must be a positive integer\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "08 POST missing fields",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/cities",
+            "description": "08 POST missing fields",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Returns 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Expected response\", () => { const data = pm.response.json(); pm.expect(data.error).to.include(\"Name and country\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "09 POST invalid JSON",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/cities",
+            "description": "09 POST invalid JSON",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{invalid",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Returns 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Expected response\", () => { const data = pm.response.json(); pm.expect(data.error).to.eql(\"Invalid JSON body\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10 GET unknown route",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/unknown",
+            "description": "10 GET unknown route",
+            "header": []
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Returns 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Expected response\", () => { const data = pm.response.json(); pm.expect(data.error).to.eql(\"Route not found\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001"
+    },
+    {
+      "key": "cityId",
+      "value": ""
+    }
+  ]
+}

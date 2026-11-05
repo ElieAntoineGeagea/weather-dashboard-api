@@ -1,0 +1,16 @@
+$kind: http-request
+description: 09 POST invalid JSON
+url: "{{baseUrl}}/cities"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: "{invalid"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Returns 400", () => pm.response.to.have.status(400));
+      pm.test("Expected response", () => { const data = pm.response.json(); pm.expect(data.error).to.eql("Invalid JSON body"); });
+    language: text/javascript
+order: 4000

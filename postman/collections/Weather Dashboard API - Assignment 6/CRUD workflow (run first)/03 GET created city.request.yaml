@@ -1,0 +1,11 @@
+$kind: http-request
+description: 03 GET created city
+url: "{{baseUrl}}/cities/{{cityId}}"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Returns 200", () => pm.response.to.have.status(200));
+      pm.test("Expected response", () => { const data = pm.response.json(); pm.expect(String(data.id)).to.eql(pm.collectionVariables.get("cityId")); pm.expect(data.name).to.eql("Beirut"); });
+    language: text/javascript
+order: 3000

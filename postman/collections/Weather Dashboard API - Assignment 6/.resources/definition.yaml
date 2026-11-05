@@ -1,0 +1,5 @@
+$kind: collection
+description: Run on http://localhost:3001. Run requests in numerical order. POST stores the new ID as cityId automatically.
+variables:
+  baseUrl: http://localhost:3001
+  cityId: ""
